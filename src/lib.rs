@@ -101,7 +101,6 @@ const AXP2101_COULOMB_COUNTER_CONTROL: u8 = 0xb8;
 /* Computed ADC */
 const AXP2101_COULOMB_COUNTER: u8 = 0xff;
 
-
 // AXP2101 datasheet: https://www.x-powers.com/en.php/Info/download/id/34.html
 const AXP2101_CHG_LED: u8 = 0x69;
 const AXP2101_ALDO_ENABLE: u8 = 0x90;
@@ -171,7 +170,7 @@ pub struct Axp2101<I> {
 // Implement Axp2101ReadWrite for I2CInterface
 impl<I> Axp2101ReadWrite for I2CInterface<I>
 where
-    I: embedded_hal::blocking::i2c::Write + embedded_hal::blocking::i2c::WriteRead,
+    I: embedded_hal::i2c::I2c,
 {
     // Send commands over I2C to AXP2101
     fn send_commands(&mut self, cmd: DataFormat<'_>) -> Result<(), Axp2101Error> {
@@ -191,16 +190,6 @@ where
             }
         }
     }
-
-    // fn read(&self, addr: u8, reg: u8, buffer: &mut [u8]) -> Result<(), Axp2101Error> {
-    //     // Implement read logic here
-    //     unimplemented!()
-    // }
-
-    // fn write(&self, addr: u8, reg: u8, buffer: &[u8]) -> Result<(), Axp2101Error> {
-    //     // Implement write logic here
-    //     unimplemented!()
-    // }
 }
 
 impl<I> Axp2101<I>
@@ -229,6 +218,37 @@ where
 
         Ok(())
     }
+
+    pub fn release_i2c<I2C>(self) -> I2C
+    where
+        I: Into<I2CPowerManagementInterface<I2C>>,
+        I2C: embedded_hal::i2c::I2c,
+    {
+        let interface: I2CPowerManagementInterface<I2C> = self.interface.into();
+        interface.release()
+    }
+}
+
+// Add this implementation to your lib.rs file in the axp2101-rs crate
+impl<I2C> Axp2101ReadWrite for I2CPowerManagementInterface<I2C>
+where
+    I2C: embedded_hal::i2c::I2c,
+{
+    fn send_commands(&mut self, cmd: DataFormat<'_>) -> Result<(), Axp2101Error> {
+        let mut data_buf = [0];
+
+        match cmd {
+            DataFormat::U8(data) => {
+                self.i2c
+                    .write_read(AXP2101_ADDRESS, &[data[0]], &mut data_buf)
+                    .map_err(|_| Axp2101Error::WriteError)?;
+
+                self.i2c
+                    .write(AXP2101_ADDRESS, data)
+                    .map_err(|_| Axp2101Error::WriteError)
+            }
+        }
+    }
 }
 
 pub struct I2CInterface<I2C> {
@@ -239,7 +259,7 @@ pub struct I2CInterface<I2C> {
 
 impl<I2C> I2CInterface<I2C>
 where
-    I2C: embedded_hal::blocking::i2c::Write, /*+ embedded_hal::blocking::i2c::WriteRead*/
+    I2C: embedded_hal::i2c::I2c,
 {
     /// Create new I2C interface for communication with a display driver
     pub fn new(i2c: I2C, addr: u8, data_byte: u8) -> Self {
@@ -258,21 +278,19 @@ where
 }
 
 #[derive(Debug, Copy, Clone)]
-pub struct I2CPowerManagementInterface(());
+pub struct I2CPowerManagementInterface<I2C> {
+    i2c: I2C,
+}
 
-impl I2CPowerManagementInterface {
-    pub fn new<I>(i2c: I) -> I2CInterface<I>
-    where
-        I: embedded_hal::blocking::i2c::Write,
-    {
-        Self::new_custom_address(i2c, AXP2101_ADDRESS)
+impl<I2C> I2CPowerManagementInterface<I2C>
+where
+    I2C: embedded_hal::i2c::I2c,
+{
+    pub fn new(i2c: I2C) -> Self {
+        Self { i2c }
     }
 
-    /// Create a new I2C interface with a custom address.
-    pub fn new_custom_address<I>(i2c: I, address: u8) -> I2CInterface<I>
-    where
-        I: embedded_hal::blocking::i2c::Write,
-    {
-        I2CInterface::new(i2c, address, 0x34)
+    pub fn release(self) -> I2C {
+        self.i2c
     }
 }

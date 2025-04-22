@@ -1,11 +1,11 @@
 [package]
 name = "axp2101"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2021"
 authors = ["Juraj Michálek <juraj.michalek@espressif.com>"]
 license = "MIT"
 
 
 [dependencies]
-embedded-hal = "0.2"
+embedded-hal = "1.0.0"
 
