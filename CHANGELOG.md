@@ -5,6 +5,29 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-01-19
+
+### Added
+- **Async Support**: Complete async implementation with `AsyncAxp2101` when the `async` feature is enabled
+  - All methods have async equivalents that work with `embedded-hal-async`
+  - Perfect for async runtimes like Embassy or Tokio
+  - Same API surface as sync version, just add `.await`
+- Comprehensive documentation for all register constants in `registers.rs`
+  - Each register now has detailed doc comments explaining its purpose
+  - Includes information about bit fields, ranges, and step sizes
+  - Makes the codebase more maintainable and easier to understand
+
+### Changed
+- Bumped version to 0.3.0 to reflect new async feature
+- Enhanced README with async usage examples and documentation
+- Updated Cargo.toml with optional `embedded-hal-async` dependency
+
+### Documentation
+- Added async example to README showing complete usage pattern
+- Documented async feature flag in Cargo.toml section
+- Added detailed inline documentation for all register addresses
+- Clarified register purposes (status, ADC, charging, power control, etc.)
+
 ## [0.2.0] - 2026-01-19
 
 ### Added

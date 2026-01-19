@@ -18,6 +18,7 @@ A complete `no_std` Rust driver for the AXP2101 Power Management IC (PMIC) using
 - ✅ **Button Battery**: Support for coin cell charging
 - ✅ **`no_std` Compatible**: Perfect for embedded systems
 - ✅ **Embedded HAL 1.0**: Uses modern traits
+- ✅ **Async Support**: Optional async API with `embedded-hal-async`
 
 ## Usage
 
@@ -25,8 +26,18 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-axp2101 = "0.2"
+axp2101 = "0.3"
 embedded-hal = "1.0"
+```
+
+### Async Support
+
+For async operations, enable the `async` feature:
+
+```toml
+[dependencies]
+axp2101 = { version = "0.3", features = ["async"] }
+embedded-hal-async = "1.0"
 ```
 
 ### Basic Example
@@ -68,6 +79,46 @@ fn main() -> Result<(), axp2101::Error<impl embedded_hal::i2c::Error>> {
     Ok(())
 }
 ```
+
+### Async Example
+
+When the `async` feature is enabled, you can use the async API:
+
+```rust
+use axp2101::AsyncAxp2101;
+use embedded_hal_async::i2c::I2c;
+
+async fn example() -> Result<(), axp2101::Error<impl embedded_hal_async::i2c::Error>> {
+    // Get your async I2C peripheral (platform-specific)
+    let i2c = /* your async I2C peripheral */;
+
+    // Create the async driver
+    let mut pmic = AsyncAxp2101::new(i2c);
+
+    // Initialize and verify chip
+    pmic.init().await?;
+
+    // Enable DC1 at 3.3V
+    pmic.enable_dc1().await?;
+    pmic.set_dc1_voltage(3300).await?;
+
+    // Read battery status
+    if pmic.is_battery_connected().await? {
+        let voltage = pmic.get_battery_voltage().await?;
+        let percent = pmic.get_battery_percent().await?;
+        println!("Battery: {}mV ({}%)", voltage, percent);
+    }
+
+    // Check if charging
+    if pmic.is_charging().await? {
+        println!("Battery is charging");
+    }
+
+    Ok(())
+}
+```
+
+The async API provides the same functionality as the synchronous version, but all methods return futures that must be awaited. This is perfect for async runtimes like `embassy` or `tokio` (for std environments).
 
 ### Configure Battery Charging
 
