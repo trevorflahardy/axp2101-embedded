@@ -1,12 +1,12 @@
 [package]
-name = "axp2101"
+name = "axp2101-embedded"
 version = "0.3.0"
 edition = "2021"
-authors = ["Trevor Flahardy <trevor@flahardy.com>"]
+authors = ["Trevor Flahardy"]
 license = "MIT"
 description = "Embedded Rust driver for the AXP2101 Power Management IC using embedded-hal"
-repository = "https://github.com/georgik/axp2101-rs"
-documentation = "https://docs.rs/axp2101"
+repository = "https://github.com/trevorflahardy/axp2101-embedded"
+documentation = "https://docs.rs/axp2101-embedded"
 keywords = ["embedded", "no-std", "pmic", "axp2101", "power-management"]
 categories = ["embedded", "no-std", "hardware-support"]
 readme = "README.md"

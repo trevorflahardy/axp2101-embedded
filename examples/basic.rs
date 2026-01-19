@@ -7,7 +7,7 @@
 #![no_std]
 #![no_main]
 
-use axp2101::{Axp2101, Error};
+use axp2101_embedded::{Axp2101, Error};
 use embedded_hal::i2c::I2c;
 
 // Platform-specific panic handler and I2C setup would go here
@@ -45,7 +45,9 @@ fn configure_pmic<I: I2c>(i2c: I) -> Result<(), Error<I::Error>> {
 
     // Enable interrupts for important events
     pmic.enable_irq(
-        axp2101::IRQ_VBUS_INSERT | axp2101::IRQ_VBUS_REMOVE | axp2101::IRQ_BAT_CHG_DONE,
+        axp2101_embedded::IRQ_VBUS_INSERT
+            | axp2101_embedded::IRQ_VBUS_REMOVE
+            | axp2101_embedded::IRQ_BAT_CHG_DONE,
     )?;
 
     // Read initial status
