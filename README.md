@@ -2,8 +2,8 @@
 
 A complete `no_std` Rust driver for the AXP2101 Power Management IC (PMIC) using the `embedded-hal` traits.
 
-[![Crates.io](https://img.shields.io/crates/v/axp2101.svg)](https://crates.io/crates/axp2101)
-[![Documentation](https://docs.rs/axp2101/badge.svg)](https://docs.rs/axp2101)
+[![Crates.io](https://img.shields.io/crates/v/axp2101-embedded.svg)](https://crates.io/crates/axp2101-embedded)
+[![Documentation](https://docs.rs/axp2101-embedded/badge.svg)](https://docs.rs/axp2101-embedded)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Features
@@ -26,7 +26,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-axp2101 = "0.3"
+axp2101-embedded = "0.3"
 embedded-hal = "1.0"
 ```
 
@@ -36,17 +36,17 @@ For async operations, enable the `async` feature:
 
 ```toml
 [dependencies]
-axp2101 = { version = "0.3", features = ["async"] }
+axp2101-embedded = { version = "0.3", features = ["async"] }
 embedded-hal-async = "1.0"
 ```
 
 ### Basic Example
 
 ```rust
-use axp2101::{Axp2101, PowerChannel};
+use axp2101_embedded::{Axp2101, PowerChannel};
 use embedded_hal::i2c::I2c;
 
-fn main() -> Result<(), axp2101::Error<impl embedded_hal::i2c::Error>> {
+fn main() -> Result<(), axp2101_embedded::Error<impl embedded_hal::i2c::Error>> {
     // Get your I2C peripheral (platform-specific)
     let i2c = /* your I2C peripheral */;
 
@@ -85,10 +85,10 @@ fn main() -> Result<(), axp2101::Error<impl embedded_hal::i2c::Error>> {
 When the `async` feature is enabled, you can use the async API:
 
 ```rust
-use axp2101::AsyncAxp2101;
+use axp2101_embedded::AsyncAxp2101;
 use embedded_hal_async::i2c::I2c;
 
-async fn example() -> Result<(), axp2101::Error<impl embedded_hal_async::i2c::Error>> {
+async fn example() -> Result<(), axp2101_embedded::Error<impl embedded_hal_async::i2c::Error>> {
     // Get your async I2C peripheral (platform-specific)
     let i2c = /* your async I2C peripheral */;
 
@@ -123,7 +123,7 @@ The async API provides the same functionality as the synchronous version, but al
 ### Configure Battery Charging
 
 ```rust
-use axp2101::{Axp2101, ThermalThreshold, ChargeLedMode};
+use axp2101_embedded::{Axp2101, ThermalThreshold, ChargeLedMode};
 
 // Set charging parameters
 pmic.set_charger_constant_curr(0x08)?;  // 200mA
@@ -138,7 +138,7 @@ pmic.set_charging_led_mode(ChargeLedMode::Blink1Hz)?;
 ### Handle Interrupts
 
 ```rust
-use axp2101::*;
+use axp2101_embedded::*;
 
 // Enable specific interrupts
 pmic.enable_irq(IRQ_VBUS_INSERT | IRQ_BAT_CHG_DONE)?;
