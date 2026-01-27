@@ -18,8 +18,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - toolchain: "1.75.0"
-            cargo_args: "--all-features"
           - toolchain: stable
             cargo_args: "--all-features"
           - toolchain: nightly
