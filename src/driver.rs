@@ -40,15 +40,15 @@ where
         }
     }
 
-    /// Initialize the AXP2101 and verify chip ID
+    /// Initialize the AXP2101 and verify chip ID. Note that this is not a required
+    /// function but rather a convenience function to set up some default settings.
+    ///
+    /// This function does the following:
+    /// - Disable NTC temperature detection
     ///
     /// Returns `Error::DeviceNotFound` if the chip ID doesn't match
     pub fn init(&mut self) -> Result<(), Error<I::Error>> {
-        let chip_id = self.read_register(AXP2101_IC_TYPE)?;
-        if chip_id != AXP2101_CHIP_ID {
-            return Err(Error::DeviceNotFound);
-        }
-        // Disable NTC temperature detection by default
+        // Disable NTC temperature detection by default - not needed for most applications
         self.disable_ts_pin_measure()?;
         Ok(())
     }

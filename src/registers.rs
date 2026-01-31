@@ -9,9 +9,6 @@
 /// Device type/ID register - Contains chip identification
 pub const AXP2101_IC_TYPE: u8 = 0x03;
 
-/// Expected chip ID value for AXP2101
-pub const AXP2101_CHIP_ID: u8 = 0x47;
-
 /// Status register 1 - Contains VBUS good, BATFET state, battery connection/active status, thermal regulation, and current limit status
 pub const AXP2101_STATUS1: u8 = 0x00;
 
