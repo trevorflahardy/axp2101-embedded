@@ -5,7 +5,7 @@
 
 /// AXP2101 Register Addresses
 /// Based on AXP2101 datasheet
-
+///
 /// Device type/ID register - Contains chip identification
 pub const AXP2101_IC_TYPE: u8 = 0x03;
 

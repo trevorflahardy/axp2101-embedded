@@ -17,14 +17,29 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        toolchain: ["1.60.0", stable, nightly]
+        include:
+          - toolchain: stable
+            cargo_args: "--all-features"
+          - toolchain: nightly
+            cargo_args: "--all-features"
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@v1
         with:
           toolchain: ${{ matrix.toolchain }}
       - uses: Swatinem/rust-cache@v2
-      - run: cargo check
+      - run: cargo check ${{ matrix.cargo_args }}
+
+  test:
+    name: cargo test (lib)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: dtolnay/rust-toolchain@v1
+        with:
+          toolchain: stable
+      - uses: Swatinem/rust-cache@v2
+      - run: cargo test --lib --all-features
 
   rustfmt:
     name: rustfmt
